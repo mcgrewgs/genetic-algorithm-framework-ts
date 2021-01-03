@@ -2,6 +2,7 @@ import { Logger } from "@nestjs/common";
 import {
     Chromosome,
     ChromosomeCrossbreeder,
+    ChromosomeDuplicateIndicator,
     ChromosomeFitnessEvaluator,
     ChromosomeFitnessSortFunction,
     ChromosomeGenePrinter,
@@ -9,6 +10,7 @@ import {
     ChromosomeMutator,
     SourceOfRandomness,
 } from "../model/chromosome";
+import { Contains } from "../utils/genericArrays";
 import { IntRange } from "../utils/intArrays";
 
 export function FirstGeneration<T>(
@@ -37,9 +39,10 @@ export function NextGeneration<T>(
     numKeepers: number,
     numChildren: number,
     numMutants: number,
-    random: SourceOfRandomness
+    random: SourceOfRandomness,
+    dupeFinder?: ChromosomeDuplicateIndicator<T>
 ): Chromosome<T>[] {
-    const nextGen: Chromosome<T>[] = [];
+    let nextGen: Chromosome<T>[] = [];
 
     IntRange(numKeepers).forEach((i) => {
         nextGen.push(currentGeneration[i]);
@@ -56,11 +59,28 @@ export function NextGeneration<T>(
     IntRange(numMutants).forEach((i) => {
         nextGen.push(mutator(currentGeneration[i], random));
     });
-    IntRange(
-        currentGeneration.length - numKeepers - numChildren - numMutants
-    ).forEach(() => {
-        nextGen.push(generator(random));
-    });
+    if (dupeFinder) {
+        const newNextGen: Chromosome<T>[] = [];
+        for (const n of nextGen) {
+            if (!Contains(newNextGen, n, dupeFinder)) {
+                newNextGen.push(n);
+            }
+        }
+        nextGen = newNextGen;
+        while (nextGen.length < currentGeneration.length) {
+            let nxt = generator(random);
+            while (Contains(nextGen, nxt, dupeFinder)) {
+                nxt = generator(random);
+            }
+            nextGen.push(nxt);
+        }
+    } else {
+        IntRange(
+            currentGeneration.length - numKeepers - numChildren - numMutants
+        ).forEach(() => {
+            nextGen.push(generator(random));
+        });
+    }
 
     for (let i = 0; i < nextGen.length; i++) {
         if (!nextGen[i].fitness) {
@@ -102,7 +122,8 @@ export function RunGenerations<T>(
     numKeepers: number,
     numChildren: number,
     numMutants: number,
-    genSize: number
+    genSize: number,
+    dupeFinder?: ChromosomeDuplicateIndicator<T>
 ): void {
     let gen = FirstGeneration(cg, cfe, genSize, sor);
     PrintGeneration(logger, gen, genePrinter, 0, totalGens, numKeepers);
@@ -116,7 +137,8 @@ export function RunGenerations<T>(
             numKeepers,
             numChildren,
             numMutants,
-            sor
+            sor,
+            dupeFinder
         );
         PrintGeneration(logger, gen, genePrinter, i + 1, totalGens, numKeepers);
     }

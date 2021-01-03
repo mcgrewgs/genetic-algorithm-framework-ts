@@ -9,6 +9,10 @@ export interface Chromosome<T> {
     fitness?: number;
 }
 
+export interface ChromosomeDuplicateIndicator<T> {
+    (c1: Chromosome<T>, c2: Chromosome<T>): boolean;
+}
+
 export interface ChromosomeGenePrinter<T> {
     (c: Chromosome<T>): string;
 }

@@ -1,7 +1,9 @@
+import { Equals } from "../utils/genericArrays";
 import { IntRange, Mean } from "../utils/intArrays";
 import {
     Chromosome,
     ChromosomeCrossbreeder,
+    ChromosomeDuplicateIndicator,
     ChromosomeFitnessEvaluator,
     ChromosomeGenePrinter,
     ChromosomeGenerator,
@@ -14,6 +16,12 @@ const maxGeneratedIntValue = 16384;
 
 export const IntMeanSourceOfRandomness = function (max: number): number {
     return Math.floor(Math.random() * Math.floor(max));
+};
+
+export const IntMeanChromosomeDuplicateIndicator: ChromosomeDuplicateIndicator<
+    number[]
+> = function (c1: Chromosome<number[]>, c2: Chromosome<number[]>): boolean {
+    return Equals(c1.genes, c2.genes);
 };
 
 export const IntMeanChromosomeCrossbreeder: ChromosomeCrossbreeder<
@@ -29,7 +37,7 @@ export const IntMeanChromosomeCrossbreeder: ChromosomeCrossbreeder<
         newGenes.splice(r(newGenes.length), 1);
     }
     return {
-        genes: newGenes,
+        genes: newGenes.sort(),
     };
 };
 
@@ -43,9 +51,9 @@ export const IntMeanChromosomeGenerator: ChromosomeGenerator<
     number[]
 > = function (r: SourceOfRandomness): Chromosome<number[]> {
     return {
-        genes: IntRange(r(maxGeneratedArrayLength) + 1).map(() =>
-            r(maxGeneratedIntValue)
-        ),
+        genes: IntRange(r(maxGeneratedArrayLength) + 1)
+            .map(() => r(maxGeneratedIntValue))
+            .sort(),
     };
 };
 

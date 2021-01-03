@@ -2,6 +2,7 @@ import { Logger } from "@nestjs/common";
 import { RunGenerations } from "./engine/generations";
 import {
     IntMeanChromosomeCrossbreeder,
+    IntMeanChromosomeDuplicateIndicator,
     IntMeanChromosomeFitnessEvaluator,
     IntMeanChromosomeGenePrinter,
     IntMeanChromosomeGenerator,
@@ -29,7 +30,8 @@ function main(): void {
         numKeepers,
         numChildren,
         numMutants,
-        generationSize
+        generationSize,
+        IntMeanChromosomeDuplicateIndicator
     );
 }
 
