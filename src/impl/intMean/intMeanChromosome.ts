@@ -1,5 +1,5 @@
-import { Equals } from "../utils/genericArrays";
-import { IntRange, Mean } from "../utils/intArrays";
+import { Equals } from "../../utils/genericArrays";
+import { IntRange, Mean } from "../../utils/intArrays";
 import {
     Chromosome,
     ChromosomeCrossbreeder,
@@ -9,7 +9,7 @@ import {
     ChromosomeGenerator,
     ChromosomeMutator,
     SourceOfRandomness,
-} from "./chromosome";
+} from "../../model/chromosome";
 
 const maxGeneratedArrayLength = 8;
 const maxGeneratedIntValue = 16384;

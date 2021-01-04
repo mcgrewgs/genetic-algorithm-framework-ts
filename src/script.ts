@@ -8,7 +8,7 @@ import {
     IntMeanChromosomeGenerator,
     IntMeanChromosomeMutator,
     IntMeanSourceOfRandomness,
-} from "./model/intMeanChromosome";
+} from "./impl/intMean/intMeanChromosome";
 const logger = new Logger("script.ts", true);
 
 const numGenerations = 100;

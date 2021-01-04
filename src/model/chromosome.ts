@@ -7,6 +7,9 @@ export interface Chromosome<T> {
     genes: T;
     // lower fitness is better
     fitness?: number;
+    name?: string;
+    parent1?: Chromosome<T>;
+    parent2?: Chromosome<T>;
 }
 
 export interface ChromosomeDuplicateIndicator<T> {

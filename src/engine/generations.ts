@@ -12,6 +12,19 @@ import {
 } from "../model/chromosome";
 import { Contains } from "../utils/genericArrays";
 import { IntRange } from "../utils/intArrays";
+import {
+    uniqueNamesGenerator,
+    Config,
+    adjectives,
+    colors,
+    names,
+} from "unique-names-generator";
+
+const nameGenConfig: Config = {
+    dictionaries: [adjectives, colors, names],
+    style: "capital",
+};
+const getRandomName: () => string = () => uniqueNamesGenerator(nameGenConfig);
 
 export function FirstGeneration<T>(
     generator: ChromosomeGenerator<T>,
@@ -22,10 +35,11 @@ export function FirstGeneration<T>(
     return IntRange(generationSize)
         .map(() => generator(random))
         .map((c) => {
-            return {
-                genes: c.genes,
-                fitness: fitnessFunc(c),
-            };
+            c.fitness = fitnessFunc(c);
+            if (!c.name) {
+                c.name = getRandomName();
+            }
+            return c;
         })
         .sort(ChromosomeFitnessSortFunction<T>());
 }
@@ -48,16 +62,20 @@ export function NextGeneration<T>(
         nextGen.push(currentGeneration[i]);
     });
     IntRange(numChildren).forEach((i) => {
-        nextGen.push(
-            crossbreeder(
-                currentGeneration[i],
-                currentGeneration[2 * numChildren - i - 1],
-                random
-            )
+        const nxt = crossbreeder(
+            currentGeneration[i],
+            currentGeneration[2 * numChildren - i - 1],
+            random
         );
+        nxt.parent1 = currentGeneration[i];
+        nxt.parent2 = currentGeneration[2 * numChildren - i - 1];
+        nextGen.push(nxt);
     });
     IntRange(numMutants).forEach((i) => {
-        nextGen.push(mutator(currentGeneration[i], random));
+        const nxt = mutator(currentGeneration[i], random);
+        nxt.parent1 = currentGeneration[i];
+        nxt.parent2 = currentGeneration[i];
+        nextGen.push(nxt);
     });
     if (dupeFinder) {
         const newNextGen: Chromosome<T>[] = [];
@@ -86,6 +104,9 @@ export function NextGeneration<T>(
         if (!nextGen[i].fitness) {
             nextGen[i].fitness = fitnessFunc(nextGen[i]);
         }
+        if (!nextGen[i].name) {
+            nextGen[i].name = getRandomName();
+        }
     }
 
     return nextGen.sort(ChromosomeFitnessSortFunction<T>());
@@ -102,10 +123,9 @@ export function PrintGeneration<T>(
     logger.log(`Generation ${genNum}/${totalGens}:`);
     logger.log("  Keepers:");
     for (let i = 0; i < numKeepers; i++) {
+        const nm = gen[i].name || `Chromosome ${i}`;
         logger.log(
-            `    Chromosome ${i} (${gen[i].fitness || 0}): ${genePrinter(
-                gen[i]
-            )}`
+            `    ${nm} (${gen[i].fitness || 0}): ${genePrinter(gen[i])}`
         );
     }
 }
@@ -141,5 +161,35 @@ export function RunGenerations<T>(
             dupeFinder
         );
         PrintGeneration(logger, gen, genePrinter, i + 1, totalGens, numKeepers);
+    }
+    // logger.log("Family trees for keepers: ");
+    // for (let i = 0; i < numKeepers; i++) {
+    //     PrintFamilyTree(logger, gen[i], "  ");
+    // }
+}
+
+export function PrintFamilyTree<T>(
+    logger: Logger,
+    c: Chromosome<T>,
+    currentIndent: string,
+    indentStep = "  "
+): void {
+    const nm = c.name || "UNKNOWN";
+    logger.log(`${currentIndent}${nm}`);
+    if (c.parent1) {
+        PrintFamilyTree(
+            logger,
+            c.parent1,
+            `${indentStep}${currentIndent}`,
+            indentStep
+        );
+    }
+    if (c.parent2) {
+        PrintFamilyTree(
+            logger,
+            c.parent2,
+            `${indentStep}${currentIndent}`,
+            indentStep
+        );
     }
 }
