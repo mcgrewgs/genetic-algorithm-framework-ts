@@ -1,7 +1,18 @@
 // should generate an int between 0 (inclusive) and max (exclusive)
 export interface SourceOfRandomness {
-    (max: number): number;
+    randInt(max: number): number;
+    randWeightedAvg(n1: number, n2: number): number;
 }
+
+export const DefaultSourceOfRandomness: SourceOfRandomness = {
+    randInt: (max: number) => {
+        return Math.floor(Math.random() * Math.floor(max));
+    },
+    randWeightedAvg: (n1: number, n2: number) => {
+        const w = Math.random();
+        return Math.floor(w * n1) + Math.ceil((1.0 - w) * n2);
+    },
+};
 
 export interface Chromosome<T> {
     genes: T;

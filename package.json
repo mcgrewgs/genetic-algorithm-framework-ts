@@ -24,8 +24,10 @@
         "@nestjs/microservices": "~7.6.1",
         "@nestjs/platform-express": "~7.4.4",
         "@nestjs/websockets": "~7.6.1",
+        "@types/deep-equal": "~1.0.1",
         "axios": "~0.21.0",
         "benny": "~3.6.15",
+        "deep-equal": "~2.0.5",
         "dotenv": "~8.2.0",
         "prompts": "~2.4.0",
         "unique-names-generator": "~4.3.1"

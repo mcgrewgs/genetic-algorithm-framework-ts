@@ -8,6 +8,7 @@ import {
     ChromosomeGenePrinter,
     ChromosomeGenerator,
     ChromosomeMutator,
+    DefaultSourceOfRandomness,
     SourceOfRandomness,
 } from "../../model/chromosome";
 
@@ -16,9 +17,7 @@ const maxGeneratedIntValue = 16384;
 
 export type IntMeanChromosomeGeneType = number[];
 
-export const IntMeanSourceOfRandomness = function (max: number): number {
-    return Math.floor(Math.random() * Math.floor(max));
-};
+export const IntMeanSourceOfRandomness = DefaultSourceOfRandomness;
 
 export const IntMeanChromosomeDuplicateIndicator: ChromosomeDuplicateIndicator<IntMeanChromosomeGeneType> = function (
     c1: Chromosome<IntMeanChromosomeGeneType>,
@@ -35,7 +34,7 @@ export const IntMeanChromosomeCrossbreeder: ChromosomeCrossbreeder<IntMeanChromo
     const newGenes = [...c1.genes];
     newGenes.push(...c2.genes);
     while (newGenes.length > maxGeneratedArrayLength) {
-        newGenes.splice(r(newGenes.length), 1);
+        newGenes.splice(r.randInt(newGenes.length), 1);
     }
     return {
         genes: newGenes.sort(),
@@ -52,8 +51,8 @@ export const IntMeanChromosomeGenerator: ChromosomeGenerator<IntMeanChromosomeGe
     r: SourceOfRandomness
 ): Chromosome<IntMeanChromosomeGeneType> {
     return {
-        genes: IntRange(r(maxGeneratedArrayLength) + 1)
-            .map(() => r(maxGeneratedIntValue))
+        genes: IntRange(r.randInt(maxGeneratedArrayLength) + 1)
+            .map(() => r.randInt(maxGeneratedIntValue))
             .sort(),
     };
 };
