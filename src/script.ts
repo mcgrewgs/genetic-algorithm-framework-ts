@@ -1,7 +1,7 @@
 import { Logger } from "@nestjs/common";
 import b from "benny";
 
-import { b256, FFT, FFT256, FFTDefault } from "./utils/fft";
+import { b256, b256bi, FFT, FFT256, FFT256BI, FFTDefault } from "./utils/fft";
 const logger = new Logger("script.ts", true);
 
 const numGenerations = 100;
@@ -31,33 +31,6 @@ function main(): void {
     // logger.log(JSON.stringify(FFT(x)));
     // logger.log(NL(x));
 
-    // b.suite(
-    //     "Bit AND methods",
-    //     b.add("SingleBitAndMath", () => {
-    //         SingleBitAndMath(BIT.OFF, BIT.OFF);
-    //         SingleBitAndMath(BIT.OFF, BIT.ON);
-    //         SingleBitAndMath(BIT.ON, BIT.OFF);
-    //         SingleBitAndMath(BIT.ON, BIT.ON);
-    //     }),
-    //     b.add("SingleBitAndConditional", () => {
-    //         SingleBitAndConditional(BIT.OFF, BIT.OFF);
-    //         SingleBitAndConditional(BIT.OFF, BIT.ON);
-    //         SingleBitAndConditional(BIT.ON, BIT.OFF);
-    //         SingleBitAndConditional(BIT.ON, BIT.ON);
-    //     }),
-    //     b.cycle(),
-    //     b.complete(),
-    //     b.save({ file: "SingleBitAnd", version: "1.0.0" }),
-    //     b.save({ file: "SingleBitAnd", format: "chart.html" })
-    // ).then(
-    //     () => {
-    //         logger.log("Suite passed!");
-    //     },
-    //     () => {
-    //         logger.error("Suite failed!");
-    //     }
-    // );
-
     b.suite(
         "FFTs",
         b.add("FFT", () => {
@@ -68,6 +41,9 @@ function main(): void {
         }),
         b.add("FFT256", () => {
             FFT256(b256);
+        }),
+        b.add("FFT256BI", () => {
+            FFT256BI(b256bi);
         }),
         b.cycle(),
         b.complete(),
