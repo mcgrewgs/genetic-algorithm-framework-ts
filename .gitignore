@@ -112,3 +112,4 @@ src/*.js
 src/**/*.js
 *.out
 *.out.*
+benchmark/

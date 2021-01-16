@@ -14,23 +14,24 @@ import {
 const maxGeneratedArrayLength = 8;
 const maxGeneratedIntValue = 16384;
 
+export type IntMeanChromosomeGeneType = number[];
+
 export const IntMeanSourceOfRandomness = function (max: number): number {
     return Math.floor(Math.random() * Math.floor(max));
 };
 
-export const IntMeanChromosomeDuplicateIndicator: ChromosomeDuplicateIndicator<
-    number[]
-> = function (c1: Chromosome<number[]>, c2: Chromosome<number[]>): boolean {
+export const IntMeanChromosomeDuplicateIndicator: ChromosomeDuplicateIndicator<IntMeanChromosomeGeneType> = function (
+    c1: Chromosome<IntMeanChromosomeGeneType>,
+    c2: Chromosome<IntMeanChromosomeGeneType>
+): boolean {
     return Equals(c1.genes, c2.genes);
 };
 
-export const IntMeanChromosomeCrossbreeder: ChromosomeCrossbreeder<
-    number[]
-> = function (
-    c1: Chromosome<number[]>,
-    c2: Chromosome<number[]>,
+export const IntMeanChromosomeCrossbreeder: ChromosomeCrossbreeder<IntMeanChromosomeGeneType> = function (
+    c1: Chromosome<IntMeanChromosomeGeneType>,
+    c2: Chromosome<IntMeanChromosomeGeneType>,
     r: SourceOfRandomness
-): Chromosome<number[]> {
+): Chromosome<IntMeanChromosomeGeneType> {
     const newGenes = [...c1.genes];
     newGenes.push(...c2.genes);
     while (newGenes.length > maxGeneratedArrayLength) {
@@ -41,15 +42,15 @@ export const IntMeanChromosomeCrossbreeder: ChromosomeCrossbreeder<
     };
 };
 
-export const IntMeanChromosomeGenePrinter: ChromosomeGenePrinter<
-    number[]
-> = function (c: Chromosome<number[]>): string {
-    return `[${c.genes.join(", ")}]`;
+export const IntMeanChromosomeGenePrinter: ChromosomeGenePrinter<IntMeanChromosomeGeneType> = function (
+    c: Chromosome<IntMeanChromosomeGeneType>
+): string {
+    return JSON.stringify(c.genes);
 };
 
-export const IntMeanChromosomeGenerator: ChromosomeGenerator<
-    number[]
-> = function (r: SourceOfRandomness): Chromosome<number[]> {
+export const IntMeanChromosomeGenerator: ChromosomeGenerator<IntMeanChromosomeGeneType> = function (
+    r: SourceOfRandomness
+): Chromosome<IntMeanChromosomeGeneType> {
     return {
         genes: IntRange(r(maxGeneratedArrayLength) + 1)
             .map(() => r(maxGeneratedIntValue))
@@ -57,15 +58,15 @@ export const IntMeanChromosomeGenerator: ChromosomeGenerator<
     };
 };
 
-export const IntMeanChromosomeMutator: ChromosomeMutator<number[]> = function (
-    c: Chromosome<number[]>,
+export const IntMeanChromosomeMutator: ChromosomeMutator<IntMeanChromosomeGeneType> = function (
+    c: Chromosome<IntMeanChromosomeGeneType>,
     r: SourceOfRandomness
-): Chromosome<number[]> {
+): Chromosome<IntMeanChromosomeGeneType> {
     return IntMeanChromosomeCrossbreeder(c, IntMeanChromosomeGenerator(r), r);
 };
 
-export const IntMeanChromosomeFitnessEvaluator: ChromosomeFitnessEvaluator<
-    number[]
-> = function (c: Chromosome<number[]>): number {
+export const IntMeanChromosomeFitnessEvaluator: ChromosomeFitnessEvaluator<IntMeanChromosomeGeneType> = function (
+    c: Chromosome<IntMeanChromosomeGeneType>
+): number {
     return -Mean(c.genes);
 };

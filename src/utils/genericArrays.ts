@@ -36,3 +36,11 @@ export function Equals<T>(
 
     return true;
 }
+
+export function ElementwiseApply<T>(
+    ts1: T[],
+    ts2: T[],
+    f: (t1: T, t2: T) => T
+): T[] {
+    return ts1.map((t, i) => f(t, ts2[i]));
+}

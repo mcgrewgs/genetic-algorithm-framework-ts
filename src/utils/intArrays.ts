@@ -9,3 +9,7 @@ export function Sum(ns: number[]): number {
 export function Mean(ns: number[]): number {
     return Sum(ns) / ns.length;
 }
+
+export function Negate(ns: number[]): number[] {
+    return ns.map((n) => -n);
+}
